@@ -7,14 +7,47 @@
 # install.packages("install.load")
 
 if (!require("install.load")) install.packages("install.load")
-install.load::install_load("leaflet", "maptools", "rgdal", "tidyverse","spdep","cartography","tmap","RColorBrewer")
+if (!require("install.load")) install.packages("maptools")
+if (!require("install.load")) install.packages("spdep")
+if (!require("install.load")) install.packages("cartography")
+if (!require("install.load")) install.packages("RColorBrewer")
+if (!require("install.load")) install.packages("tmap")
+if (!require("install.load")) install.packages("leaflet")
+if (!require("install.load")) install.packages("mapproj")
+if (!require("install.load")) install.packages("rgdal")
+if (!require("install.load")) install.packages("tidyverse")
 
+
+library(tidyverse, warn.conflicts = F)
+library(mapproj, warn.conflicts = F)
+library(markdown, warn.conflicts = F)
+library(leaflet, warn.conflicts = F)
+library(rgdal, warn.conflicts = F)
+library(tidyverse, warn.conflicts = F)
+library(maptools, warn.conflicts = F)
+library(spdep, warn.conflicts = F)
+library(cartography, warn.conflicts = F)
+library(RColorBrewer, warn.conflicts = F)
+# library(tmap, warn.conflicts = F)
 
 #############################################################################
 #Lendo os dados
 #############################################################################
 setwd("~/../ownCloud/AtlasViolencia/2018")
 
+
+# Importando shapefile (mapa do Brasil)----
+# Carregando os pacotes----
+
+library(maptools)    
+library(spdep)         
+library(cartography)   
+library(tmap)          
+library(leaflet)       
+library(dplyr)
+library(rgdal)
+library(dplyr)
+library(RColorBrewer)
 
 # Importando shapefile (mapa do Brasil)----
 
@@ -49,6 +82,7 @@ brasilpg$taxas[is.na(brasilpg$taxas)] <- 0 #substituindo NA por 0
 # display.brewer.all()
 
 pal <- colorBin("YlOrRd",domain = NULL,n=5) #cores do mapa
+pal2 <- colorBin("White",domain = NULL,n=5) #cores do mapa
 
 state_popup <- paste0("<strong>Estado: </strong>",
                       brasilpg$uf,
@@ -56,13 +90,22 @@ state_popup <- paste0("<strong>Estado: </strong>",
                       round(brasilpg$taxas,2))
 leaflet(data = brasilpg) %>%
   addProviderTiles("CartoDB.Positron") %>%
-  addPolygons(fillColor = ~pal(brasilpg$taxas),
-              fillOpacity = 0.8,
-              color = "#BDBDC3",
+  # addPolygons(fillColor = ~pal2(mapaUF$id),
+  #             fillOpacity = 0.8,
+  #             color = "#ffffff",
+  #             weight = 1) %>%
+  
+  addPolygons(fillColor = ~pal2(brasilpg$taxas),
+              fillOpacity = 0.1,
+              color = "#ffffff",
               weight = 1,
               popup = state_popup) %>%
   addScaleBar("bottomright") %>%
   addLegend("topright", pal = pal, values = ~brasilpg$taxas,
             title = "Taxa de Homicidios",
             opacity = 1)
+
+#color = "#BDBDC3" -> amarela
+#color = "#ffffff" -> branca
+
 # addPolylines(mapaUF) %>%
